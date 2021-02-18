@@ -1,4 +1,7 @@
 api_platform:
+    title: 'API TeamPark'
+    description: 'The REST API for TeamPark Interface'
+    version: '1.0.0'
     mapping:
         paths: ['%kernel.project_dir%/src/Entity']
     patch_formats:

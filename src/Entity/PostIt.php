@@ -2,12 +2,16 @@
 
 namespace App\Entity;
 
+use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\PostItRepository;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ApiResource()
+ * @ApiResource(
+ *     normalizationContext={"groups"={"read"}},
+ *     denormalizationContext={"groups"={"write"}}
+ * )
  * @ORM\Entity(repositoryClass=PostItRepository::class)
  */
 class PostIt
@@ -16,33 +20,45 @@ class PostIt
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     *
+     * @Groups({"read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @Groups({"read", "write"})
      */
     private $category;
 
     /**
      * @ORM\Column(type="text")
+     *
+     * @Groups({"read", "write"})
      */
     private $message;
 
     /**
      * @ORM\Column(type="boolean")
+     *
+     * @Groups({"read", "write"})
      */
     private $seen;
 
     /**
      * @ORM\Column(type="boolean")
+     *
+     * @Groups({"read", "write"})
      */
     private $canAnswer;
 
     /**
      * @ORM\Column(type="boolean")
+     *
+     * @Groups({"read", "write"})
      */
-    private $claseAnswer;
+    private $closeAnswer;
 
     public function getId(): ?int
     {
@@ -97,14 +113,14 @@ class PostIt
         return $this;
     }
 
-    public function getClaseAnswer(): ?bool
+    public function getCloseAnswer(): ?bool
     {
-        return $this->claseAnswer;
+        return $this->closeAnswer;
     }
 
-    public function setClaseAnswer(bool $claseAnswer): self
+    public function setCloseAnswer(bool $closeAnswer): self
     {
-        $this->claseAnswer = $claseAnswer;
+        $this->closeAnswer = $closeAnswer;
 
         return $this;
     }
