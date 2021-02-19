@@ -11,6 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\SerializedName;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use ApiPlatform\Core\Annotation\ApiProperty;
 
 /**
  * @ApiResource(
@@ -21,7 +23,7 @@ use Symfony\Component\Serializer\Annotation\SerializedName;
  * @ORM\Table(name="`user`")
  * @UniqueEntity(fields={"email"}, message="This email has already taken !")
  */
-class User
+class User implements UserInterface
 {
     /**
      * @ORM\Id
@@ -71,7 +73,7 @@ class User
      *
      * @Groups("read")
      */
-    private $roles = [];
+    private $roles = ["STUDENT"];
 
     /**
      * @ORM\Column(type="text", nullable=true)
@@ -116,10 +118,13 @@ class User
     private $slugger;
 
     /**
-     * @ORM\ManyToOne(targetEntity=MediaObject::class)
-     * @ORM\JoinColumn(nullable=false)
+     * @var MediaObject|null
+     *
+     * @ORM\OneToOne(targetEntity=MediaObject::class)
+     * @ORM\JoinColumn(nullable=true)
      *
      * @Groups({"read", "write"})
+     * @ApiProperty(iri="http://schema.org/avatar")
      */
     private $avatar;
 

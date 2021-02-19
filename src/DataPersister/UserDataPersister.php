@@ -62,7 +62,17 @@ class UserDataPersister implements ContextAwareDataPersisterInterface
             );
 
             $data->eraseCredentials();
+        }else{
+            $data->setPassword(
+                $this->_passwordEncoder->encodePassword(
+                    $data,
+                    bin2hex(random_bytes(5))
+                )
+            );
+
+            $data->eraseCredentials();
         }
+
         
         if ($this->_request->getMethod() === 'POST') {
             $data->setSlugger(
