@@ -108,7 +108,7 @@ class User implements UserInterface
      *
      * @Groups({"read", "write"})
      */
-    private $personnality = [];
+    private $personality = [];
 
     /**
      * @ORM\Column(type="string", length=255)
@@ -338,14 +338,14 @@ class User implements UserInterface
         return $this;
     }
 
-    public function getPersonnality(): ?array
+    public function getPersonality(): ?array
     {
-        return $this->personnality;
+        return $this->personality;
     }
 
-    public function setPersonnality(?array $personnality): self
+    public function setPersonality(?array $personality): self
     {
-        $this->personnality = $personnality;
+        $this->personality = $personality;
 
         return $this;
     }
