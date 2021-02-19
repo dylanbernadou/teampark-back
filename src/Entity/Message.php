@@ -39,6 +39,27 @@ class Message
      */
     private $datetime;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="messages")
+     * @ORM\JoinColumn(nullable=false)
+     *
+     * @Groups({"read", "write"})
+     */
+    private $user;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Channel::class, inversedBy="messages")
+     * @ORM\JoinColumn(nullable=false)
+     *
+     * @Groups({"read", "write"})
+     */
+    private $channel;
+
+    public function __construct()
+    {
+        $this->datetime = new \DateTime();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -64,6 +85,30 @@ class Message
     public function setDatetime(\DateTimeInterface $datetime): self
     {
         $this->datetime = $datetime;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getChannel(): ?Channel
+    {
+        return $this->channel;
+    }
+
+    public function setChannel(?Channel $channel): self
+    {
+        $this->channel = $channel;
 
         return $this;
     }

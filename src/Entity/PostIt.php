@@ -44,13 +44,6 @@ class PostIt
      *
      * @Groups({"read", "write"})
      */
-    private $seen;
-
-    /**
-     * @ORM\Column(type="boolean")
-     *
-     * @Groups({"read", "write"})
-     */
     private $canAnswer;
 
     /**
@@ -59,6 +52,36 @@ class PostIt
      * @Groups({"read", "write"})
      */
     private $closeAnswer;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="postIts")
+     * @ORM\JoinColumn(nullable=false)
+     *
+     * @Groups({"read", "write"})
+     */
+    private $user;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Promotion::class, inversedBy="postIts")
+     *
+     * @Groups({"read", "write"})
+     */
+    private $promotion;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=School::class, inversedBy="postIts")
+     * @ORM\JoinColumn(nullable=false)
+     *
+     * @Groups({"read", "write"})
+     */
+    private $school;
+
+    public function __construct()
+    {
+        $this->canAnswer = true;
+        $this->closeAnswer = false;
+    }
+
 
     public function getId(): ?int
     {
@@ -89,18 +112,6 @@ class PostIt
         return $this;
     }
 
-    public function getSeen(): ?bool
-    {
-        return $this->seen;
-    }
-
-    public function setSeen(bool $seen): self
-    {
-        $this->seen = $seen;
-
-        return $this;
-    }
-
     public function getCanAnswer(): ?bool
     {
         return $this->canAnswer;
@@ -121,6 +132,42 @@ class PostIt
     public function setCloseAnswer(bool $closeAnswer): self
     {
         $this->closeAnswer = $closeAnswer;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getPromotion(): ?Promotion
+    {
+        return $this->promotion;
+    }
+
+    public function setPromotion(?Promotion $promotion): self
+    {
+        $this->promotion = $promotion;
+
+        return $this;
+    }
+
+    public function getSchool(): ?School
+    {
+        return $this->school;
+    }
+
+    public function setSchool(?School $school): self
+    {
+        $this->school = $school;
 
         return $this;
     }

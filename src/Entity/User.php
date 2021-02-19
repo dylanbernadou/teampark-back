@@ -2,10 +2,15 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Serializer\Annotation\SerializedName;
 
 /**
  * @ApiResource(
@@ -14,6 +19,7 @@ use Doctrine\ORM\Mapping as ORM;
  * )
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
+ * @UniqueEntity(fields={"email"}, message="This email has already taken !")
  */
 class User
 {
@@ -41,18 +47,31 @@ class User
     private $lastname;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     *
-     * @Groups({"read", "write"})
+     * @var string The hashed password
+     * @ORM\Column(type="string")
      */
     private $password;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @Groups({"write"})
+     *
+     * @SerializedName("password")
+     */
+    private $plainPassword;
+
+    /**
+     * @ORM\Column(type="string", length=255, unique=true)
      *
      * @Groups({"read", "write"})
      */
     private $email;
+
+    /**
+     * @ORM\Column(type="json")
+     *
+     * @Groups("read")
+     */
+    private $roles = [];
 
     /**
      * @ORM\Column(type="text", nullable=true)
@@ -96,6 +115,100 @@ class User
      */
     private $slugger;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=MediaObject::class)
+     * @ORM\JoinColumn(nullable=false)
+     *
+     * @Groups({"read", "write"})
+     */
+    private $avatar;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Message::class, mappedBy="user", orphanRemoval=true)
+     *
+     * @Groups({"read"})
+     */
+    private $messages;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=School::class, inversedBy="users")
+     * @ORM\JoinColumn(nullable=false)
+     *
+     * @Groups({"read", "write"})
+     */
+    private $school;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Promotion::class, inversedBy="users")
+     * @ORM\JoinColumn(nullable=false)
+     *
+     * @Groups({"read", "write"})
+     */
+    private $promotion;
+
+    /**
+     * @ORM\OneToMany(targetEntity=PostIt::class, mappedBy="user", orphanRemoval=true)
+     *
+     * @Groups({"read"})
+     */
+    private $postIts;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Channel::class, mappedBy="users")
+     *
+     * @Groups({"read"})
+     */
+    private $channels;
+
+    public function __construct()
+    {
+        $this->messages = new ArrayCollection();
+        $this->postIts = new ArrayCollection();
+        $this->channels = new ArrayCollection();
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function eraseCredentials()
+    {
+        $this->plainPassword = null;
+    }
+
+    /**
+     * A visual identifier that represents this user.
+     *
+     * @see UserInterface
+     */
+    public function getUsername(): string
+    {
+        return (string) $this->email;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getRoles(): array
+    {
+        $roles = $this->roles;
+        // guarantee every user at least has ROLE_USER
+        $roles[] = 'ROLE_USER';
+
+        return array_unique($roles);
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    public function hasRoles(string $roles): bool
+    {
+        return in_array($roles, $this->roles);
+    }
+
     public function getId(): ?int
     {
         return $this->id;
@@ -125,14 +238,37 @@ class User
         return $this;
     }
 
-    public function getPassword(): ?string
+    /**
+     * @see UserInterface
+     */
+    public function getPassword(): string
     {
-        return $this->password;
+        return (string) $this->password;
     }
 
     public function setPassword(string $password): self
     {
         $this->password = $password;
+
+        return $this;
+    }
+
+    /**
+     * @see UserInterface
+     */
+    public function getSalt()
+    {
+        // not needed when using the "bcrypt" algorithm in security.yaml
+    }
+
+    public function getPlainPassword(): ?string
+    {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword(string $plainPassword): self
+    {
+        $this->plainPassword = $plainPassword;
 
         return $this;
     }
@@ -217,6 +353,129 @@ class User
     public function setSlugger(string $slugger): self
     {
         $this->slugger = $slugger;
+
+        return $this;
+    }
+
+    public function getAvatar(): ?MediaObject
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar(?MediaObject $avatar): self
+    {
+        $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Message[]
+     */
+    public function getMessages(): Collection
+    {
+        return $this->messages;
+    }
+
+    public function addMessage(Message $message): self
+    {
+        if (!$this->messages->contains($message)) {
+            $this->messages[] = $message;
+            $message->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessage(Message $message): self
+    {
+        if ($this->messages->removeElement($message)) {
+            // set the owning side to null (unless already changed)
+            if ($message->getUser() === $this) {
+                $message->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getSchool(): ?School
+    {
+        return $this->school;
+    }
+
+    public function setSchool(?School $school): self
+    {
+        $this->school = $school;
+
+        return $this;
+    }
+
+    public function getPromotion(): ?Promotion
+    {
+        return $this->promotion;
+    }
+
+    public function setPromotion(?Promotion $promotion): self
+    {
+        $this->promotion = $promotion;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PostIt[]
+     */
+    public function getPostIts(): Collection
+    {
+        return $this->postIts;
+    }
+
+    public function addPostIt(PostIt $postIt): self
+    {
+        if (!$this->postIts->contains($postIt)) {
+            $this->postIts[] = $postIt;
+            $postIt->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePostIt(PostIt $postIt): self
+    {
+        if ($this->postIts->removeElement($postIt)) {
+            // set the owning side to null (unless already changed)
+            if ($postIt->getUser() === $this) {
+                $postIt->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Channel[]
+     */
+    public function getChannels(): Collection
+    {
+        return $this->channels;
+    }
+
+    public function addChannel(Channel $channel): self
+    {
+        if (!$this->channels->contains($channel)) {
+            $this->channels[] = $channel;
+            $channel->addUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChannel(Channel $channel): self
+    {
+        if ($this->channels->removeElement($channel)) {
+            $channel->removeUser($this);
+        }
 
         return $this;
     }
