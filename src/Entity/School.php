@@ -8,12 +8,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\SchoolRepository;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 
 /**
- * @ApiResource(
- *     normalizationContext={"groups"={"read"}},
- *     denormalizationContext={"groups"={"write"}}
- * )
+ * @ApiResource
  * @ORM\Entity(repositoryClass=SchoolRepository::class)
  */
 class School
@@ -22,36 +20,31 @@ class School
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     *
-     * @Groups({"read"})
+     * @ApiSubresource(maxDepth=1)
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     *
-     * @Groups({"read", "write"})
+     * @ApiSubresource(maxDepth=1)
      */
     private $name;
 
     /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="school", orphanRemoval=true)
-     *
-     * @Groups({"read"})
+     * @ApiSubresource(maxDepth=1)
      */
     private $users;
 
     /**
      * @ORM\OneToMany(targetEntity=Promotion::class, mappedBy="school", orphanRemoval=true)
-     *
-     * @Groups({"read"})
+     * @ApiSubresource(maxDepth=1)
      */
     private $promotions;
 
     /**
      * @ORM\OneToMany(targetEntity=PostIt::class, mappedBy="school", orphanRemoval=true)
-     *
-     * @Groups({"read"})
+     * @ApiSubresource(maxDepth=1)
      */
     private $postIts;
 

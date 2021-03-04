@@ -6,12 +6,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\MessageRepository;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 
 /**
- * @ApiResource(
- *     normalizationContext={"groups"={"read"}},
- *     denormalizationContext={"groups"={"write"}}
- * )
+ * @ApiResource
  * @ORM\Entity(repositoryClass=MessageRepository::class)
  */
 class Message
@@ -20,38 +18,30 @@ class Message
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     *
-     * @Groups({"read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="text")
-     *
-     * @Groups({"read", "write"})
      */
     private $content;
 
     /**
      * @ORM\Column(type="datetime")
-     *
-     * @Groups({"read"})
      */
     private $datetime;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="messages")
      * @ORM\JoinColumn(nullable=false)
-     *
-     * @Groups({"read", "write"})
+     * @ApiSubresource(maxDepth=1)
      */
     private $user;
 
     /**
      * @ORM\ManyToOne(targetEntity=Channel::class, inversedBy="messages")
      * @ORM\JoinColumn(nullable=false)
-     *
-     * @Groups({"read", "write"})
+     * @ApiSubresource(maxDepth=1)
      */
     private $channel;
 

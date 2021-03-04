@@ -6,12 +6,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\PostItRepository;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 
 /**
- * @ApiResource(
- *     normalizationContext={"groups"={"read"}},
- *     denormalizationContext={"groups"={"write"}}
- * )
+ * @ApiResource
  * @ORM\Entity(repositoryClass=PostItRepository::class)
  */
 class PostIt
@@ -20,59 +18,45 @@ class PostIt
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     *
-     * @Groups({"read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     *
-     * @Groups({"read", "write"})
      */
     private $category;
 
     /**
      * @ORM\Column(type="text")
-     *
-     * @Groups({"read", "write"})
      */
     private $message;
 
     /**
      * @ORM\Column(type="boolean")
-     *
-     * @Groups({"read", "write"})
      */
     private $canAnswer;
 
     /**
      * @ORM\Column(type="boolean")
-     *
-     * @Groups({"read", "write"})
      */
     private $closeAnswer;
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="postIts")
      * @ORM\JoinColumn(nullable=false)
-     *
-     * @Groups({"read", "write"})
+     * @ApiSubresource(maxDepth=1)
      */
     private $user;
 
     /**
      * @ORM\ManyToOne(targetEntity=Promotion::class, inversedBy="postIts")
-     *
-     * @Groups({"read", "write"})
+     * @ApiSubresource(maxDepth=1)
      */
     private $promotion;
 
     /**
      * @ORM\ManyToOne(targetEntity=School::class, inversedBy="postIts")
-     * @ORM\JoinColumn(nullable=false)
-     *
-     * @Groups({"read", "write"})
+     * @ApiSubresource(maxDepth=1)
      */
     private $school;
 

@@ -37,10 +37,10 @@ security:
     access_control:
         - { path: ^/api/docs, roles: IS_AUTHENTICATED_ANONYMOUSLY } # Allows accessing the Swagger UI
         - { path: ^/api/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/api/users, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api/messages, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api/postits, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api/channels, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api/promotions, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api/schools, roles: IS_AUTHENTICATED_FULLY }
-        - { path: ^/api/mediaobjects, roles: IS_AUTHENTICATED_FULLY }
+        #- { path: ^/api/users, roles: IS_AUTHENTICATED_FULLY }
+        #- { path: ^/api/messages, roles: IS_AUTHENTICATED_FULLY }
+        #- { path: ^/api/postits, roles: IS_AUTHENTICATED_FULLY }
+        #- { path: ^/api/channels, roles: IS_AUTHENTICATED_FULLY }
+        #- { path: ^/api/promotions, roles: IS_AUTHENTICATED_FULLY }
+        #- { path: ^/api/schools, roles: IS_AUTHENTICATED_FULLY }
+        #- { path: ^/api/mediaobjects, roles: IS_AUTHENTICATED_FULLY }

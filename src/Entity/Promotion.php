@@ -8,6 +8,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\PromotionRepository;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 
 /**
  * @ApiResource(
@@ -22,37 +23,30 @@ class Promotion
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     *
-     * @Groups({"read"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     *
-     * @Groups({"read", "write"})
      */
     private $name;
 
     /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="promotion", orphanRemoval=true)
-     *
-     * @Groups({"read"})
+     * @ApiSubresource(maxDepth=1)
      */
     private $users;
 
     /**
      * @ORM\ManyToOne(targetEntity=School::class, inversedBy="promotions")
      * @ORM\JoinColumn(nullable=false)
-     *
-     * @Groups({"read", "write"})
+     * @ApiSubresource(maxDepth=1)
      */
     private $school;
 
     /**
      * @ORM\OneToMany(targetEntity=PostIt::class, mappedBy="promotion")
-     *
-     * @Groups({"read"})
+     * @ApiSubresource(maxDepth=1)
      */
     private $postIts;
 

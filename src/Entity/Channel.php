@@ -8,9 +8,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 
 /**
- * @ApiResource()
+ * @ApiResource
  * @ORM\Entity(repositoryClass=ChannelRepository::class)
  */
 class Channel
@@ -19,22 +20,18 @@ class Channel
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     *
-     * @Groups({"read"})
      */
     private $id;
 
     /**
      * @ORM\ManyToMany(targetEntity=User::class, inversedBy="channels")
-     *
-     * @Groups({"read", "write"})
+     * @ApiSubresource(maxDepth=1)
      */
     private $users;
 
     /**
      * @ORM\OneToMany(targetEntity=Message::class, mappedBy="channel", orphanRemoval=true)
-     *
-     * @Groups({"read"})
+     * @ApiSubresource(maxDepth=1)
      */
     private $messages;
 

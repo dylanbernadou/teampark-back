@@ -13,12 +13,10 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Serializer\Annotation\SerializedName;
 use Vich\UploaderBundle\Mapping\Annotation as Vich;
 use ApiPlatform\Core\Annotation\ApiProperty;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 
 /**
- * @ApiResource(
- *     normalizationContext={"groups"={"read"}},
- *     denormalizationContext={"groups"={"write"}}
- * )
+ * @ApiResource
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\Table(name="`user`")
  * @UniqueEntity(fields={"email"}, message="This email has already taken !")
@@ -29,22 +27,16 @@ class User implements UserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     *
-     * @Groups("read")
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     *
-     * @Groups({"read", "write"})
      */
     private $firstname;
 
     /**
      * @ORM\Column(type="string", length=255)
-     *
-     * @Groups({"read", "write"})
      */
     private $lastname;
 
@@ -55,65 +47,47 @@ class User implements UserInterface
     private $password;
 
     /**
-     * @Groups({"write"})
-     *
      * @SerializedName("password")
      */
     private $plainPassword;
 
     /**
      * @ORM\Column(type="string", length=255, unique=true)
-     *
-     * @Groups({"read", "write"})
      */
     private $email;
 
     /**
      * @ORM\Column(type="json")
-     *
-     * @Groups("read")
      */
     private $roles = ["STUDENT"];
 
     /**
      * @ORM\Column(type="text", nullable=true)
-     *
-     * @Groups({"read", "write"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     *
-     * @Groups({"read", "write"})
      */
     private $phone;
 
     /**
      * @ORM\Column(type="array", nullable=true)
-     *
-     * @Groups({"read", "write"})
      */
     private $interests = [];
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     *
-     * @Groups({"read", "write"})
      */
     private $mbti;
 
     /**
      * @ORM\Column(type="array", nullable=true)
-     *
-     * @Groups({"read", "write"})
      */
     private $personality = [];
 
     /**
      * @ORM\Column(type="string", length=255)
-     *
-     * @Groups({"read"})
      */
     private $slugger;
 
@@ -122,46 +96,40 @@ class User implements UserInterface
      *
      * @ORM\OneToOne(targetEntity=MediaObject::class)
      * @ORM\JoinColumn(nullable=true)
-     *
-     * @Groups({"read", "write"})
+     * @ApiSubresource(maxDepth=1)
      * @ApiProperty(iri="http://schema.org/avatar")
      */
     private $avatar;
 
     /**
      * @ORM\OneToMany(targetEntity=Message::class, mappedBy="user", orphanRemoval=true)
-     *
-     * @Groups({"read"})
+     * @ApiSubresource(maxDepth=1)
      */
     private $messages;
 
     /**
      * @ORM\ManyToOne(targetEntity=School::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
-     *
-     * @Groups({"read", "write"})
+     * @ApiSubresource(maxDepth=1)
      */
     private $school;
 
     /**
      * @ORM\ManyToOne(targetEntity=Promotion::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
-     *
-     * @Groups({"read", "write"})
+     * @ApiSubresource(maxDepth=1)
      */
     private $promotion;
 
     /**
      * @ORM\OneToMany(targetEntity=PostIt::class, mappedBy="user", orphanRemoval=true)
-     *
-     * @Groups({"read"})
+     * @ApiSubresource(maxDepth=1)
      */
     private $postIts;
 
     /**
      * @ORM\ManyToMany(targetEntity=Channel::class, mappedBy="users")
-     *
-     * @Groups({"read"})
+     * @ApiSubresource(maxDepth=1)
      */
     private $channels;
 

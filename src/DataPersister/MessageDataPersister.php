@@ -28,6 +28,9 @@ class MessageDataPersister implements ContextAwareDataPersisterInterface
 
     public function persist($data, array $context = [])
     {
+
+        $data->setDatetime(new \Datetime());
+        
         $this->_entityManager->persist($data);
         $this->_entityManager->flush();
     }
