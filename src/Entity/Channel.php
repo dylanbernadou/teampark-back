@@ -35,6 +35,11 @@ class Channel
      */
     private $messages;
 
+    /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $name;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
@@ -96,6 +101,18 @@ class Channel
                 $message->setChannel(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): self
+    {
+        $this->name = $name;
 
         return $this;
     }
